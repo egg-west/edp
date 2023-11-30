@@ -1,3 +1,11 @@
+# Installation
+```
+# based on my jaxrl conda environment
+pip install -r ./requirements.txt
+# error raised about tensorflow
+pip install dm-acme[jax,tf]
+```
+
 # Efficient Diffusion Policy
 
 Official Jax implementation of EDP, from the following paper: 
