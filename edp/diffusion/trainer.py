@@ -58,7 +58,7 @@ from edp.utilities.utils import (
 from edp.viskit.logging import logger, setup_logger
 
 FLAGS_DEF = define_flags_with_default(
-  algo="DiffQL",
+  #algo="DiffQL",
   # algo="DiffusionQL",
   type="model-free",
   env="walker2d-medium-replay-v2",
