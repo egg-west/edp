@@ -45,6 +45,8 @@ FLAGS_DEF = define_flags_with_default(
   sample_method='ddpm',
   policy_temp=1.0,
   norm_reward=False,
+  project='OfflineRL_edp',
+  project='',
 )
 
 

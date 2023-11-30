@@ -83,14 +83,16 @@ class WandBLogger(object):
 
   def __init__(self, config, variant, env_name):
     self.config = self.get_default_config(config)
+    config.project = variant["project"]
+    config.prefix = variant["prefix"]
 
     if self.config.experiment_id is None:
       self.config.experiment_id = uuid.uuid4().hex
 
-    if self.config.prefix != "":
-      self.config.project = "{}--{}".format(
-        self.config.prefix, self.config.project
-      )
+    # if self.config.prefix != "":
+    #   self.config.project = "{}--{}".format(
+    #     self.config.prefix, self.config.project
+    #   )
 
     if self.config.output_dir == "":
       self.config.output_dir = tempfile.mkdtemp()
@@ -108,14 +110,13 @@ class WandBLogger(object):
     if self.config.random_delay > 0:
       time.sleep(np.random.uniform(0, self.config.random_delay))
 
-    #print(f"{self._variant=}")
     self.run = wandb.init(
       #entity=self.config.team,
       reinit=True,
       config=self._variant,
       project=self.config.project,
       group=self._variant["env"],
-      name=str(self._variant["seed"]),
+      name=f'{self.config.prefix}{self._variant["seed"]}',
       dir=self.config.output_dir,
       id=self.config.experiment_id,
       #anonymous=self.config.anonymous,
@@ -131,7 +132,8 @@ class WandBLogger(object):
     self.run.log(*args, **kwargs)
 
   def save_pickle(self, obj, filename):
-    with open(os.path.join(self.config.output_dir, filename), "wb") as fout:
+    #with open(os.path.join(self.config.output_dir, filename), "wb") as fout:
+    with open(os.path.join("experiment_output", filename), "wb") as fout:
       pickle.dump(obj, fout)
 
   @property
