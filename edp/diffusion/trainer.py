@@ -260,13 +260,13 @@ class DiffusionTrainer:
             metrics["done" +
                     post] = np.mean([np.sum(t["dones"]) for t in trajs])
 
-          if self._cfgs.save_model:
-            save_data = {
-              "agent": self._agent,
-              "variant": self._variant,
-              "epoch": epoch
-            }
-            self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_{epoch}.pkl")
+          # if self._cfgs.save_model:
+          #   save_data = {
+          #     "agent": self._agent,
+          #     "variant": self._variant,
+          #     "epoch": epoch
+          #   }
+          #   self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_{epoch}.pkl")
 
       metrics["train_time"] = train_timer()
       metrics["eval_time"] = eval_timer()
@@ -285,9 +285,10 @@ class DiffusionTrainer:
       }
       self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_final.pkl")
 
-  def train_mcep(self, load_path):
+  def train_mcep(self):
     self._setup()
     # load the learned q and v
+    load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["sedd"]}_final.pkl')
     with open(load_path, 'rb') as f:
       data = pickle.load(f)
       self._agent = data["agent"]

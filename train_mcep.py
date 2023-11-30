@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
   def main(argv):
     trainer = DiffusionTrainer(FLAGS_DEF)
-    trainer.train_mcep(trainer._variant["pkl_path"])
+    trainer.train_mcep()
     os._exit(os.EX_OK)
 
   absl.app.run(main)
