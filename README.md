@@ -4,6 +4,8 @@
 pip install -r ./requirements.txt
 # error raised about tensorflow
 pip install dm-acme[jax,tf]
+
+# https://github.com/google/jax/issues/14931
 sudo apt-get install libcudnn8=8.8.1.3-1+cuda11.8
 sudo apt-get install libcudnn8-dev=8.8.1.3-1+cuda11.8
 ```

@@ -67,9 +67,10 @@ class WandBLogger(object):
   def get_default_config(updates=None):
     config = ConfigDict()
     config.team = 'jax_offrl'
-    config.online = False
+    #config.online = False
+    config.online = True
     config.prefix = ""
-    config.project = "OfflineRL"
+    config.project = "OfflineRL_edp"
     config.output_dir = "/tmp/diffusion_rl"
     config.random_delay = 0.0
     config.experiment_id = config_dict.placeholder(str)
