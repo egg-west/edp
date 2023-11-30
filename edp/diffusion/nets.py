@@ -26,8 +26,8 @@ from diffusion.diffusion import (
   ModelMeanType,
   _extract_into_tensor,
 )
-from diffusion.dpm_solver import DPM_Solver, NoiseScheduleVP
-from utilities.jax_utils import extend_and_repeat
+from edp.diffusion.dpm_solver import DPM_Solver, NoiseScheduleVP
+from edp.utilities.jax_utils import extend_and_repeat
 
 
 def multiple_action_q_function(forward):
