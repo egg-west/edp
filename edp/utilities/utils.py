@@ -32,7 +32,7 @@ from ml_collections import ConfigDict
 from ml_collections.config_dict import config_dict
 from ml_collections.config_flags import config_flags
 
-from utilities.jax_utils import init_rng
+from edp.utilities.jax_utils import init_rng
 
 
 def norm_obs(ds, mean, std, clip_val):

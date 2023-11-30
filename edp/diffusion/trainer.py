@@ -25,8 +25,8 @@ import jax.numpy as jnp
 import numpy as np
 import tqdm
 
-from data import Dataset, DM2Gym, RandSampler, RLUPDataset
-from diffusion.constants import (
+from edp.data import Dataset, DM2Gym, RandSampler, RLUPDataset
+from edp.diffusion.constants import (
   DATASET,
   DATASET_ABBR_MAP,
   DATASET_MAP,
@@ -34,19 +34,19 @@ from diffusion.constants import (
   ENV_MAP,
   ENVNAME_MAP,
 )
-from diffusion.diffusion import (
+from edp.diffusion.diffusion import (
   GaussianDiffusion,
   LossType,
   ModelMeanType,
   ModelVarType,
 )
-from diffusion.dql import DiffusionQL
-from diffusion.hps import hyperparameters
-from diffusion.nets import Critic, DiffusionPolicy, GaussianPolicy, Value
-from utilities.jax_utils import batch_to_jax, next_rng
-from utilities.replay_buffer import get_d4rl_dataset
-from utilities.sampler import TrajSampler
-from utilities.utils import (
+from edp.diffusion.dql import DiffusionQL
+from edp.diffusion.hps import hyperparameters
+from edp.diffusion.nets import Critic, DiffusionPolicy, GaussianPolicy, Value
+from edp.utilities.jax_utils import batch_to_jax, next_rng
+from edp.utilities.replay_buffer import get_d4rl_dataset
+from edp.utilities.sampler import TrajSampler
+from edp.utilities.utils import (
   Timer,
   WandBLogger,
   define_flags_with_default,
@@ -55,7 +55,7 @@ from utilities.utils import (
   prefix_metrics,
   set_random_seed,
 )
-from viskit.logging import logger, setup_logger
+from edp.viskit.logging import logger, setup_logger
 
 FLAGS_DEF = define_flags_with_default(
   algo="DiffQL",

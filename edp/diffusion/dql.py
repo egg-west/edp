@@ -23,9 +23,9 @@ import optax
 from flax.training.train_state import TrainState
 from ml_collections import ConfigDict
 
-from core.core_api import Algo
-from diffusion.diffusion import GaussianDiffusion
-from utilities.jax_utils import (
+from edp.core.core_api import Algo
+from edp.diffusion.diffusion import GaussianDiffusion
+from edp.utilities.jax_utils import (
   extend_and_repeat,
   mse_loss,
   next_rng,

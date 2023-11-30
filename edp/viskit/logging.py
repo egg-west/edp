@@ -20,7 +20,7 @@ import time
 
 import tempfile
 
-from viskit.tabulate import tabulate
+from edp.viskit.tabulate import tabulate
 
 
 class TerminalTablePrinter(object):

@@ -16,7 +16,7 @@
 
 import numpy as np
 
-from utilities.traj_dataset import get_nstep_dataset
+from edp.utilities.traj_dataset import get_nstep_dataset
 
 
 class ReplayBuffer(object):
