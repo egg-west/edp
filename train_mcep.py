@@ -47,7 +47,7 @@ FLAGS_DEF = define_flags_with_default(
   norm_reward=False,
   pkl_path="model.pkl",
   project='OfflineRL_edp',
-  project='mcep_',
+  prefix='mcep_',
 )
 
 
