@@ -115,7 +115,7 @@ class WandBLogger(object):
       config=self._variant,
       project=self.config.project,
       group=self._variant["env"],
-      name=self._variant["seed"],
+      name=str(self._variant["seed"]),
       dir=self.config.output_dir,
       id=self.config.experiment_id,
       #anonymous=self.config.anonymous,

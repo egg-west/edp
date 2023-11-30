@@ -266,7 +266,7 @@ class DiffusionTrainer:
               "variant": self._variant,
               "epoch": epoch
             }
-            self._wandb_logger.save_pickle(save_data, f"model_{epoch}.pkl")
+            self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_{epoch}.pkl")
 
       metrics["train_time"] = train_timer()
       metrics["eval_time"] = eval_timer()
@@ -283,7 +283,7 @@ class DiffusionTrainer:
         "variant": self._variant,
         "epoch": epoch
       }
-      self._wandb_logger.save_pickle(save_data, "model_final.pkl")
+      self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_final.pkl")
 
   def train_mcep(self, load_path):
     self._setup()
