@@ -21,7 +21,7 @@ import flax.linen as nn
 import jax
 import jax.numpy as jnp
 
-from diffusion.diffusion import (
+from edp.diffusion.diffusion import (
   GaussianDiffusion,
   ModelMeanType,
   _extract_into_tensor,
