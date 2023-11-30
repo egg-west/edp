@@ -113,9 +113,11 @@ class WandBLogger(object):
       reinit=True,
       config=self._variant,
       project=self.config.project,
+      group=self.config.env,
+      name=self.config.seed,
       dir=self.config.output_dir,
       id=self.config.experiment_id,
-      anonymous=self.config.anonymous,
+      #anonymous=self.config.anonymous,
       notes=self.config.notes,
       settings=wandb.Settings(
         start_method="thread",
