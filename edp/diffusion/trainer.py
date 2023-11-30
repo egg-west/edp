@@ -193,7 +193,7 @@ class DiffusionTrainer:
 
     self._act_fn = act_fn
 
-    self._variant = get_user_flags(self._cfgs)
+    self._variant = get_user_flags(self._cfgs, FLAGS_DEF)
     for k, v in self._cfgs.algo_cfg.items():
       self._variant[f"algo.{k}"] = v
 
