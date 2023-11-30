@@ -45,6 +45,7 @@ FLAGS_DEF = define_flags_with_default(
   sample_method='ddpm',
   policy_temp=1.0,
   norm_reward=False,
+  pkl_path="model.pkl"
 )
 
 
@@ -52,7 +53,7 @@ if __name__ == '__main__':
 
   def main(argv):
     trainer = DiffusionTrainer(FLAGS_DEF)
-    trainer.train()
+    trainer.train_mcep(FLAGS_DEF.pkl_path)
     os._exit(os.EX_OK)
 
   absl.app.run(main)

@@ -308,6 +308,17 @@ class DiffusionQL(Algo):
     return getattr(self, f"_train_step_{self.config.loss_type.lower()}"
                   )(train_states, tgt_params, rng, batch, policy_tgt_update)
 
+  @partial(jax.jit, static_argnames=('self', 'policy_tgt_update'))
+  def _train_step_mcep(
+    self, train_states, tgt_params, rng, batch, policy_tgt_update=False
+  ):
+    if self.config.loss_type not in ['TD3', 'CRR', 'IQL']:
+      raise NotImplementedError
+
+    return getattr(self, f"_train_step_mcep_{self.config.loss_type.lower()}"
+                  )(train_states, tgt_params, rng, batch, policy_tgt_update)
+
+
   def _train_step_td3(
     self, train_states, tgt_params, rng, batch, policy_tgt_update=False
   ):
@@ -386,6 +397,57 @@ class DiffusionQL(Algo):
       lmbda=aux_policy['lmbda'].mean(),
       qf1_grad_norm=optax.global_norm(grads_qf[0]['qf1']),
       qf2_grad_norm=optax.global_norm(grads_qf[1]['qf2']),
+      policy_grad_norm=optax.global_norm(grads_policy[0]['policy']),
+      qf1_weight_norm=optax.global_norm(train_states['qf1'].params),
+      qf2_weight_norm=optax.global_norm(train_states['qf2'].params),
+      policy_weight_norm=optax.global_norm(train_states['policy'].params),
+    )
+
+    return train_states, tgt_params, metrics
+
+  def _train_step_mcep_td3(
+    self, train_states, tgt_params, rng, batch, policy_tgt_update=False
+  ):
+    value_loss_fn = self.get_value_loss(batch)
+    diff_loss_fn = self.get_diff_loss(batch)
+
+    def policy_loss_fn(params, tgt_params, rng):
+      observations = batch['observations']
+
+      rng, split_rng = jax.random.split(rng)
+      diff_loss, _, _, pred_astart = diff_loss_fn(params, split_rng)
+
+      # Calculate guide loss
+      def fn(key):
+        q = self.qf.apply(params[key], observations, pred_astart)
+        lmbda = self.config.alpha / jax.lax.stop_gradient(jnp.abs(q).mean())
+        policy_loss = -lmbda * q.mean()
+        return lmbda, policy_loss
+
+      lmbda, guide_loss = jax.lax.cond(
+        jax.random.uniform(rng) > 0.5, partial(fn, 'qf1'), partial(fn, 'qf2')
+      )
+
+      policy_loss = diff_loss + self.config.guide_coef * guide_loss
+      return (policy_loss,), locals()
+
+
+    # Calculat policy losses and grads
+    params = {key: train_states[key].params for key in self.model_keys}
+    (_, aux_policy), grads_policy = value_and_multi_grad(
+      policy_loss_fn, 1, has_aux=True
+    )(params, tgt_params, rng)
+
+    # Update policy train states
+    train_states['policy'] = train_states['policy'].apply_gradients(
+      grads=grads_policy[0]['policy']
+    )
+
+    metrics = dict(
+      policy_loss=aux_policy['policy_loss'],
+      guide_loss=aux_policy['guide_loss'],
+      diff_loss=aux_policy['diff_loss'],
+      lmbda=aux_policy['lmbda'].mean(),
       policy_grad_norm=optax.global_norm(grads_policy[0]['policy']),
       qf1_weight_norm=optax.global_norm(train_states['qf1'].params),
       qf2_weight_norm=optax.global_norm(train_states['qf2'].params),
@@ -680,6 +742,15 @@ class DiffusionQL(Algo):
     self._train_states, self._tgt_params, metrics = self._train_step(
       self._train_states, self._tgt_params, next_rng(), batch,
       policy_tgt_update
+    )
+    return metrics
+
+  def train_mcep(self, batch):
+    self._total_steps += 1
+
+    self._train_states, self._tgt_params, metrics = self._train_step_mcep(
+      self._train_states, self._tgt_params, next_rng(), batch,
+      True
     )
     return metrics
 
