@@ -64,7 +64,7 @@ class Timer(object):
 class WandBLogger(object):
 
   @staticmethod
-  def get_default_config(updates=None):
+  def get_default_config(updates=None, mcep=False):
     config = ConfigDict()
     config.team = 'jax_offrl'
     #config.online = False
@@ -76,6 +76,7 @@ class WandBLogger(object):
     config.experiment_id = config_dict.placeholder(str)
     config.anonymous = config_dict.placeholder(str)
     config.notes = config_dict.placeholder(str)
+    config.mcep = mcep
 
     if updates is not None:
       config.update(ConfigDict(updates).copy_and_resolve_references())
@@ -109,13 +110,16 @@ class WandBLogger(object):
 
     if self.config.random_delay > 0:
       time.sleep(np.random.uniform(0, self.config.random_delay))
+    if config.mcep:
+      group_name = f'mcep-{self._variant["sample_method"]}-{self._variant["env"]}'
+    else:
+      group_name = f'{self._variant["sample_method"]}-{self._variant["env"]}'
 
     self.run = wandb.init(
-      #entity=self.config.team,
       reinit=True,
       config=self._variant,
       project=self.config.project,
-      group=f'{self._variant["sample_method"]}-{self._variant["env"]}',
+      group=group_name,
       name=f'{self.config.prefix}{self._variant["seed"]}',
       dir=self.config.output_dir,
       id=self.config.experiment_id,
