@@ -269,12 +269,12 @@ class PolicyExtractor(Algo):
                   )(train_states, tgt_params, rng, batch, policy_tgt_update)
 
   def _train_step_mcep_td3(
-    self, train_states, tgt_params, rng, batch, policy_tgt_update=False
+    self, train_states, rng, batch, policy_tgt_update=False
   ):
     value_loss_fn = self.get_value_loss(batch)
     diff_loss_fn = self.get_diff_loss(batch)
 
-    def policy_loss_fn(params, tgt_params, rng):
+    def policy_loss_fn(params, rng):
       observations = batch['observations']
 
       rng, split_rng = jax.random.split(rng)
@@ -299,7 +299,7 @@ class PolicyExtractor(Algo):
     params = {key: train_states[key].params for key in self.model_keys}
     (_, aux_policy), grads_policy = value_and_multi_grad(
       policy_loss_fn, 1, has_aux=True
-    )(params, tgt_params, rng)
+    )(params, rng)
 
     # Update policy train states
     train_states['policy'] = train_states['policy'].apply_gradients(
@@ -317,7 +317,7 @@ class PolicyExtractor(Algo):
       policy_weight_norm=optax.global_norm(train_states['policy'].params),
     )
 
-    return train_states, tgt_params, metrics
+    return train_states, metrics
 
   def _train_step_crr(
     self, train_states, tgt_params, rng, batch, policy_tgt_update=False
@@ -599,8 +599,8 @@ class PolicyExtractor(Algo):
   def train_mcep(self, batch):
     self._total_steps += 1
 
-    self._train_states, self._tgt_params, metrics = self._train_step_mcep(
-      self._train_states, self._tgt_params, next_rng(), batch,
+    self._train_states, metrics = self._train_step_mcep(
+      self._train_states, next_rng(), batch,
       True
     )
     return metrics
