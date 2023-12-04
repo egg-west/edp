@@ -111,7 +111,7 @@ class WandBLogger(object):
     if self.config.random_delay > 0:
       time.sleep(np.random.uniform(0, self.config.random_delay))
     if config.mcep:
-      group_name = f'mcep-{self._variant["sample_method"]}-{self._variant["env"]}'
+      group_name = f'mcep-{self._variant["policy_temp"]}-{self._variant["sample_method"]}-{self._variant["env"]}'
     else:
       group_name = f'{self._variant["sample_method"]}-{self._variant["env"]}'
 

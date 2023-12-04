@@ -188,7 +188,7 @@ class PolicyTrainer:
     self._qf = self._setup_qf()
     self._vf = self._setup_vf()
 
-    load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["sedd"]}_final.pkl')
+    load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["seed"]}_final.pkl')
     with open(load_path, 'rb') as f:
       data = pickle.load(f)
       tmp_pretrained_agent = data["agent"]
