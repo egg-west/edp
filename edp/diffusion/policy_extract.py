@@ -157,8 +157,8 @@ class PolicyExtractor(Algo):
     #   jnp.zeros((10, self.observation_dim)),
     #   jnp.zeros((10, self.action_dim)),
     # )
-    qf1_params = deepcopy(ref_agent.qf1_params)
-    qf2_params = deepcopy(ref_agent.qf2_params)
+    qf1_params = deepcopy(ref_agent.train_states["qf1"].params)
+    qf2_params = deepcopy(ref_agent.train_states["qf2"].params)
 
     vf_params = self.vf.init(next_rng(), jnp.zeros((10, self.observation_dim)))
 
