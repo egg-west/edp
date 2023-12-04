@@ -260,13 +260,13 @@ class PolicyExtractor(Algo):
 
   @partial(jax.jit, static_argnames=('self', 'policy_tgt_update'))
   def _train_step_mcep(
-    self, train_states, tgt_params, rng, batch, policy_tgt_update=False
+    self, train_states, rng, batch, policy_tgt_update=False
   ):
     if self.config.loss_type not in ['TD3', 'CRR', 'IQL']:
       raise NotImplementedError
 
     return getattr(self, f"_train_step_mcep_{self.config.loss_type.lower()}"
-                  )(train_states, tgt_params, rng, batch, policy_tgt_update)
+                  )(train_states, rng, batch, policy_tgt_update)
 
   def _train_step_mcep_td3(
     self, train_states, rng, batch, policy_tgt_update=False
@@ -600,8 +600,7 @@ class PolicyExtractor(Algo):
     self._total_steps += 1
 
     self._train_states, metrics = self._train_step_mcep(
-      self._train_states, next_rng(), batch,
-      True
+      self._train_states, next_rng(), batch, True
     )
     return metrics
 
