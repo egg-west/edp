@@ -236,6 +236,18 @@ class PolicyExtractor(Algo):
 
     return diff_loss
 
+  def train(self, batch):
+    self._total_steps += 1
+    policy_tgt_update = (
+      self._total_steps > 1000 and
+      self._total_steps % self.config.policy_tgt_freq == 0
+    )
+    self._train_states, self._tgt_params, metrics = self._train_step(
+      self._train_states, self._tgt_params, next_rng(), batch,
+      policy_tgt_update
+    )
+    return metrics
+
   @partial(jax.jit, static_argnames=('self', 'policy_tgt_update'))
   def _train_step(
     self, train_states, tgt_params, rng, batch, policy_tgt_update=False
