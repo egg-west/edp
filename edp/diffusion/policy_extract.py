@@ -271,7 +271,7 @@ class PolicyExtractor(Algo):
   def _train_step_mcep_td3(
     self, train_states, rng, batch, policy_tgt_update=False
   ):
-    value_loss_fn = self.get_value_loss(batch)
+    #value_loss_fn = self.get_value_loss(batch)
     diff_loss_fn = self.get_diff_loss(batch)
 
     def policy_loss_fn(params, rng):
