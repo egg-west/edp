@@ -115,7 +115,7 @@ class WandBLogger(object):
       reinit=True,
       config=self._variant,
       project=self.config.project,
-      group=self._variant["env"],
+      group=f'{self._variant["sample_method"]}-{self._variant["env"]}',
       name=f'{self.config.prefix}{self._variant["seed"]}',
       dir=self.config.output_dir,
       id=self.config.experiment_id,
