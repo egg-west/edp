@@ -288,7 +288,7 @@ class DiffusionTrainer:
   def train_mcep(self):
     self._setup()
     # load the learned q and v
-    load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["sedd"]}_final.pkl')
+    load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["seed"]}_final.pkl')
     with open(load_path, 'rb') as f:
       data = pickle.load(f)
       self._agent = data["agent"]
