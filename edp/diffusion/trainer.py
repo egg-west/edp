@@ -291,10 +291,10 @@ class DiffusionTrainer:
     load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["seed"]}_final.pkl')
     with open(load_path, 'rb') as f:
       data = pickle.load(f)
-      self._agent = data["agent"]
+      tmp_agent = data["agent"]
       self._variant = data["variant"]
     # reinitialized the policy as mcep
-    self._setup_mcep()
+    self._agent.policy
 
     act_methods = self._cfgs.act_method.split('-')
     viskit_metrics = {}

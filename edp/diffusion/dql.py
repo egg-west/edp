@@ -431,7 +431,6 @@ class DiffusionQL(Algo):
       policy_loss = diff_loss + self.config.guide_coef * guide_loss
       return (policy_loss,), locals()
 
-
     # Calculat policy losses and grads
     params = {key: train_states[key].params for key in self.model_keys}
     (_, aux_policy), grads_policy = value_and_multi_grad(
