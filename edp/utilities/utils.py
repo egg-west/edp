@@ -64,11 +64,11 @@ class Timer(object):
 class WandBLogger(object):
 
   @staticmethod
-  def get_default_config(updates=None, mcep=False):
+  def get_default_config(updates=None, mcep=False, online=True):
     config = ConfigDict()
     config.team = 'jax_offrl'
     #config.online = False
-    config.online = True
+    config.online = online
     config.prefix = ""
     config.project = "OfflineRL_edp"
     config.output_dir = "/tmp/diffusion_rl"
