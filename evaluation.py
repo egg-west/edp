@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
   def main(argv):
     trainer = DiffusionTrainer(FLAGS_DEF)
-    trainer.train_mcep()
+    trainer.evaluate()
     os._exit(os.EX_OK)
 
   absl.app.run(main)
