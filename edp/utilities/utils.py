@@ -111,14 +111,16 @@ class WandBLogger(object):
     if self.config.random_delay > 0:
       time.sleep(np.random.uniform(0, self.config.random_delay))
     if config.mcep:
+      project_name = "edp_mcep"
       group_name = f'mcep-{self._variant["policy_temp"]}-{self._variant["sample_method"]}-{self._variant["env"]}'
     else:
+      project_name = self.config.project
       group_name = f'{self._variant["sample_method"]}-{self._variant["env"]}'
 
     self.run = wandb.init(
       reinit=True,
       config=self._variant,
-      project=self.config.project,
+      project=project_name,
       group=group_name,
       name=f'{self.config.prefix}{self._variant["seed"]}',
       dir=self.config.output_dir,
