@@ -285,82 +285,75 @@ class DiffusionTrainer:
       }
       self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_final.pkl")
 
-  def train_mcep(self):
+  def evaluate(self):
     self._setup()
     # load the learned q and v
     load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{self._variant["seed"]}_final.pkl')
     with open(load_path, 'rb') as f:
       data = pickle.load(f)
-      tmp_agent = data["agent"]
+      self._agent = data["agent"]
       self._variant = data["variant"]
     # reinitialized the policy as mcep
-    self._agent.policy
 
     act_methods = self._cfgs.act_method.split('-')
     viskit_metrics = {}
     recent_returns = {method: deque(maxlen=10) for method in act_methods}
     best_returns = {method: -float('inf') for method in act_methods}
-    for epoch in range(self._cfgs.n_epochs):
-      metrics = {"epoch": epoch}
+    # for epoch in range(self._cfgs.n_epochs):
+    #   metrics = {"epoch": epoch}
 
-      with Timer() as train_timer:
-        for _ in tqdm.tqdm(range(self._cfgs.n_train_step_per_epoch)):
-          batch = batch_to_jax(self._dataset.sample())
-          metrics.update(prefix_metrics(self._agent.train_mcep(batch), "agent"))
+    #   with Timer() as train_timer:
+    #     for _ in tqdm.tqdm(range(self._cfgs.n_train_step_per_epoch)):
+    #       batch = batch_to_jax(self._dataset.sample())
+    #       metrics.update(prefix_metrics(self._agent.train_mcep(batch), "agent"))
 
-      with Timer() as eval_timer:
-        if epoch == 0 or (epoch + 1) % self._cfgs.eval_period == 0:
+    #   with Timer() as eval_timer:
+    #     if epoch == 0 or (epoch + 1) % self._cfgs.eval_period == 0:
+    metrics = {"epoch": 0}
+    for method in act_methods:
+      # TODO: merge these two
+      self._sampler_policy.act_method = \
+        method or self._cfgs.sample_method + "ensemble"
+      if self._cfgs.sample_method == 'ddim':
+        self._sampler_policy.act_method = "ensemble"
+      trajs = self._eval_sampler.sample(
+        self._sampler_policy.update_params(self._agent.train_params),
+        self._cfgs.eval_n_trajs,
+        deterministic=True,
+        obs_statistics=(self._obs_mean, self._obs_std, self._obs_clip),
+      )
 
-          for method in act_methods:
-            # TODO: merge these two
-            self._sampler_policy.act_method = \
-              method or self._cfgs.sample_method + "ensemble"
-            if self._cfgs.sample_method == 'ddim':
-              self._sampler_policy.act_method = "ensemble"
-            trajs = self._eval_sampler.sample(
-              self._sampler_policy.update_params(self._agent.train_params),
-              self._cfgs.eval_n_trajs,
-              deterministic=True,
-              obs_statistics=(self._obs_mean, self._obs_std, self._obs_clip),
-            )
+      post = "" if len(act_methods) == 1 else "_" + method
+      # metrics["average_return" +
+      #         post] = np.mean([np.sum(t["rewards"]) for t in trajs])
+      # metrics["average_traj_length" +
+      #         post] = np.mean([len(t["rewards"]) for t in trajs])
+      metrics["average_normalizd_return" + post] = cur_return = np.mean(
+        [
+          self._eval_sampler.env.get_normalized_score(
+            np.sum(t["rewards"])
+          ) for t in trajs
+        ]
+      )
+      recent_returns[method].append(cur_return)
+      # metrics["average_10_normalized_return" +
+      #         post] = np.mean(recent_returns[method])
+      # metrics["best_normalized_return" +
+      #         post] = best_returns[method] = max(
+      #           best_returns[method], cur_return
+      #         )
+      # metrics["done" +
+      #         post] = np.mean([np.sum(t["dones"]) for t in trajs])
 
-            post = "" if len(act_methods) == 1 else "_" + method
-            metrics["average_return" +
-                    post] = np.mean([np.sum(t["rewards"]) for t in trajs])
-            metrics["average_traj_length" +
-                    post] = np.mean([len(t["rewards"]) for t in trajs])
-            metrics["average_normalizd_return" + post] = cur_return = np.mean(
-              [
-                self._eval_sampler.env.get_normalized_score(
-                  np.sum(t["rewards"])
-                ) for t in trajs
-              ]
-            )
-            recent_returns[method].append(cur_return)
-            metrics["average_10_normalized_return" +
-                    post] = np.mean(recent_returns[method])
-            metrics["best_normalized_return" +
-                    post] = best_returns[method] = max(
-                      best_returns[method], cur_return
-                    )
-            metrics["done" +
-                    post] = np.mean([np.sum(t["dones"]) for t in trajs])
+    # if self._cfgs.save_model:
+    #   save_data = {
+    #     "agent": self._agent,
+    #     "variant": self._variant,
+    #     "epoch": epoch
+    #   }
+    #   self._wandb_logger.save_pickle(save_data, f"model_{epoch}.pkl")
 
-          # if self._cfgs.save_model:
-          #   save_data = {
-          #     "agent": self._agent,
-          #     "variant": self._variant,
-          #     "epoch": epoch
-          #   }
-          #   self._wandb_logger.save_pickle(save_data, f"model_{epoch}.pkl")
-
-      metrics["train_time"] = train_timer()
-      metrics["eval_time"] = eval_timer()
-      metrics["epoch_time"] = train_timer() + eval_timer()
-      self._wandb_logger.log(metrics)
-      viskit_metrics.update(metrics)
-      logger.record_dict(viskit_metrics)
-      logger.dump_tabular(with_prefix=False, with_timestamp=False)
+    print(metrics)
 
     # save model
     # if self._cfgs.save_model:
