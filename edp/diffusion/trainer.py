@@ -288,6 +288,7 @@ class DiffusionTrainer:
   def evaluate(self):
     self._setup()
     SEED_LIST = [614021354, 26319752, 733433172, 615518666, 82136667]
+    return_list = []
     for sd in SEED_LIST:
       # load the learned q and v
       load_path = os.path.join("experiment_output", f'{self._variant["env"]}_{sd}_final.pkl')
@@ -295,13 +296,12 @@ class DiffusionTrainer:
         data = pickle.load(f)
         self._agent = data["agent"]
         self._variant = data["variant"]
-        print(f"{data['epoch']=}")
+        epoch = data['epoch']
       self._sampler_policy = SamplerPolicy(self._agent.policy, self._agent.qf)
 
       act_methods = self._cfgs.act_method.split('-')
-      viskit_metrics = {}
-      recent_returns = {method: deque(maxlen=10) for method in act_methods}
-      best_returns = {method: -float('inf') for method in act_methods}
+      #recent_returns = {method: deque(maxlen=10) for method in act_methods}
+      #best_returns = {method: -float('inf') for method in act_methods}
       # for epoch in range(self._cfgs.n_epochs):
       #   metrics = {"epoch": epoch}
 
@@ -312,13 +312,14 @@ class DiffusionTrainer:
 
       #   with Timer() as eval_timer:
       #     if epoch == 0 or (epoch + 1) % self._cfgs.eval_period == 0:
-      metrics = {"epoch": 0}
+      metrics = {"epoch": epoch}
       for method in act_methods:
         # TODO: merge these two
         self._sampler_policy.act_method = \
           method or self._cfgs.sample_method + "ensemble"
         if self._cfgs.sample_method == 'ddim':
           self._sampler_policy.act_method = "ensemble"
+
         trajs = self._eval_sampler.sample(
           self._sampler_policy.update_params(self._agent.train_params),
           self._cfgs.eval_n_trajs,
@@ -335,8 +336,10 @@ class DiffusionTrainer:
             ) for t in trajs
           ]
         )
-        recent_returns[method].append(cur_return)
+        #recent_returns[method].append(cur_return)
+        return_list.append(cur_return)
       print(sd, metrics)
+    print(np.mean(return_list), np.std(return_list)/np.sqrt(5))
 
   def _setup(self):
 
