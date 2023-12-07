@@ -295,6 +295,7 @@ class DiffusionTrainer:
         data = pickle.load(f)
         self._agent = data["agent"]
         self._variant = data["variant"]
+        print(f"{data['epoch']=}")
       self._sampler_policy = SamplerPolicy(self._agent.policy, self._agent.qf)
 
       act_methods = self._cfgs.act_method.split('-')
