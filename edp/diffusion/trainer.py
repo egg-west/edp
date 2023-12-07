@@ -295,6 +295,7 @@ class DiffusionTrainer:
         data = pickle.load(f)
         self._agent = data["agent"]
         self._variant = data["variant"]
+      self._sampler_policy = SamplerPolicy(self._agent.policy, self._agent.qf)
 
       act_methods = self._cfgs.act_method.split('-')
       viskit_metrics = {}
@@ -323,7 +324,7 @@ class DiffusionTrainer:
           deterministic=True,
           obs_statistics=(self._obs_mean, self._obs_std, self._obs_clip),
         )
-        print(self._sampler_policy.act_method)
+        #print(self._sampler_policy.act_method)
 
         post = "" if len(act_methods) == 1 else "_" + method
         metrics["average_normalizd_return" + post] = cur_return = np.mean(
