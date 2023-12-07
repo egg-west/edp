@@ -295,7 +295,6 @@ class DiffusionTrainer:
         data = pickle.load(f)
         self._agent = data["agent"]
         self._variant = data["variant"]
-      # reinitialized the policy as mcep
 
       act_methods = self._cfgs.act_method.split('-')
       viskit_metrics = {}
@@ -324,6 +323,7 @@ class DiffusionTrainer:
           deterministic=True,
           obs_statistics=(self._obs_mean, self._obs_std, self._obs_clip),
         )
+        print(self._sampler_policy.act_method)
 
         post = "" if len(act_methods) == 1 else "_" + method
         metrics["average_normalizd_return" + post] = cur_return = np.mean(

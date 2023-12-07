@@ -127,10 +127,10 @@ class WandBLogger(object):
       id=self.config.experiment_id,
       #anonymous=self.config.anonymous,
       notes=self.config.notes,
-      settings=wandb.Settings(
-        start_method="thread",
-        _disable_stats=True,
-      ),
+      # settings=wandb.Settings(
+      #   start_method="thread",
+      #   _disable_stats=True,
+      # ),
       mode="online" if self.config.online else "offline",
     )
 
