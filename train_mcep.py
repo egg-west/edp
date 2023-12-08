@@ -45,6 +45,7 @@ FLAGS_DEF = define_flags_with_default(
   act_method='',
   sample_method='ddpm',
   policy_temp=1.0,
+  alpha=2.0,
   norm_reward=False,
   pkl_path="model.pkl",
   project='OfflineRL_edp',
