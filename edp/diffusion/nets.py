@@ -14,7 +14,8 @@
 
 """Networks for diffusion policy."""
 from functools import partial
-from typing import Tuple
+from typing import Tuple, Union, Sequence, Callable, Optional
+from flax.core.frozen_dict import FrozenDict
 
 import distrax
 import flax.linen as nn
@@ -326,3 +327,66 @@ class Value(nn.Module):
   @property
   def input_size(self):
     return self.observation_dim
+
+def default_init(scale: float = jnp.sqrt(2)):
+    return nn.initializers.orthogonal(scale)
+
+def _flatten_dict(x: Union[FrozenDict, jnp.ndarray]) -> jnp.ndarray:
+    """ observation from some environments are in a dictionary, thus
+        get all the values into one vector
+    """
+    if hasattr(x, "values"):
+        return jnp.concatenate([_flatten_dict(v) for k, v in sorted(x.items())], -1)
+    else:
+        return x
+
+class MLP(nn.Module):
+    hidden_dims: Sequence[int]
+    activations: Callable[[jnp.ndarray], jnp.ndarray] = nn.relu
+    activate_final: int = False
+    scale_final: Optional[float] = None
+    dropout_rate: Optional[float] = None
+
+    @nn.compact
+    def __call__(self, x: jnp.ndarray, training: bool = False) -> jnp.ndarray:
+        x = _flatten_dict(x)
+
+        for i, size in enumerate(self.hidden_dims):
+            if i + 1 == len(self.hidden_dims) and self.scale_final is not None:
+                x = nn.Dense(size, kernel_init=default_init(self.scale_final))(x)
+            else:
+                x = nn.Dense(size, kernel_init=default_init())(x)
+
+            if i + 1 < len(self.hidden_dims) or self.activate_final:
+                x = self.activations(x)
+                if self.dropout_rate is not None and self.dropout_rate > 0:
+                    x = nn.Dropout(rate=self.dropout_rate)(
+                        x, deterministic=not training
+                    )
+        return x
+
+class DeterministicPolicy(nn.Module):
+    hidden_dims: Sequence[int]
+    action_dim: int
+    act_max: float
+    dropout_rate: Optional[float] = None
+    apply_tanh: bool = True
+    activations: Callable[[jnp.ndarray], jnp.ndarray] = nn.relu
+
+    @nn.compact
+    def __call__(
+        self, observations: jnp.ndarray, training: bool = False
+    ) -> distrax.Distribution:
+        outputs = MLP(
+            self.hidden_dims,
+            activate_final=True,
+            dropout_rate=self.dropout_rate,
+            activations=self.activations,
+        )(observations, training=training)
+
+        action = nn.Dense(self.action_dim, kernel_init=default_init())(outputs)
+
+        if self.apply_tanh:
+            action = nn.tanh(action)
+
+        return action * self.act_max

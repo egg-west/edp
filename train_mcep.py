@@ -56,6 +56,8 @@ FLAGS_DEF = define_flags_with_default(
 if __name__ == '__main__':
 
   def main(argv):
+    """Currently, train an MCEP with diffusion policy
+    """
     trainer = PolicyTrainer(FLAGS_DEF)
     trainer.train_mcep()
     os._exit(os.EX_OK)

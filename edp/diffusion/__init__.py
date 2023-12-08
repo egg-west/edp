@@ -14,4 +14,4 @@
 
 __version__ = "0.0.1"
 
-from . import constants, diffusion, dpm_solver, dql, hps, nets, trainer
+from . import constants, diffusion, dpm_solver, dql, hps, nets, trainer, td3bc, td3bc_trainer
