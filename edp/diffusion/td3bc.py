@@ -347,7 +347,7 @@ class TD3BC(Algo):
 
       # Calculate guide loss
       def fn(key):
-        q = self.qf.apply(params[key], rng, observations, predicted_action)
+        q = self.qf.apply(params[key], observations, predicted_action)
         lmbda = self.config.alpha / jax.lax.stop_gradient(jnp.abs(q).mean())
         policy_loss = -lmbda * q.mean()
         return lmbda, policy_loss
