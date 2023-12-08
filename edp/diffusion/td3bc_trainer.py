@@ -96,6 +96,7 @@ class TD3BCTrainer:
     self._cfgs = absl.flags.FLAGS
     self._algo = TD3BC#DiffusionQL
     self._algo_type = 'DiffusionQL'
+    print(self._cfgs)
 
     self._cfgs.algo_cfg.max_grad_norm = hyperparameters[self._cfgs.env]['gn']
     self._cfgs.algo_cfg.lr_decay_steps = \
