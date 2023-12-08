@@ -220,8 +220,11 @@ class TD3BC(Algo):
           tgt_q2_max = batch_idx(tgt_q2, jnp.argsort(tgt_q2, axis=-1)[:, -tk])
           tgt_q = jnp.minimum(tgt_q1_max, tgt_q2_max)
       else:
+        # next_action = self.policy.apply(
+        #   tgt_params['policy'], rng, next_observations
+        # )
         next_action = self.policy.apply(
-          tgt_params['policy'], rng, next_observations
+          tgt_params['policy'], next_observations, training=False
         )
         tgt_q1 = self.qf.apply(
           tgt_params['qf1'], next_observations, next_action
