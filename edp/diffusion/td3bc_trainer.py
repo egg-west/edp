@@ -109,10 +109,10 @@ class TD3BCTrainer:
     self._act_fn = act_fn
 
     self._variant = get_user_flags(self._cfgs, FLAGS_DEF)
+    self._cfgs.algo_cfg.alpha = self._variant["alpha"]
     for k, v in self._cfgs.algo_cfg.items():
       self._variant[f"algo.{k}"] = v
 
-    self._cfg.algo_cfg.alpha = self._variant["alpha"]
     # get high level env
     env_name_full = self._cfgs.env
     for scenario_name in ENV_MAP:
