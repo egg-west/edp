@@ -196,6 +196,7 @@ def print_flags(flags, flags_def):
 
 
 def get_user_flags(flags, flags_def):
+  # for key in flags_def, get values w.r.t these keys from flags
   output = {}
   for key in flags_def:
     val = getattr(flags, key)

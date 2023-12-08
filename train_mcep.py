@@ -32,7 +32,7 @@ FLAGS_DEF = define_flags_with_default(
   orthogonal_init=False,
   policy_log_std_multiplier=1.0,
   policy_log_std_offset=-1.0,
-  algo_cfg=DiffusionQL.get_default_config(),
+  algo_cfg=DiffusionQL.get_default_config(online=False),
   n_epochs=2000,
   n_train_step_per_epoch=1000,
   eval_period=10,

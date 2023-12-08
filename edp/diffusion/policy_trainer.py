@@ -64,8 +64,6 @@ class PolicyTrainer:
 
   def __init__(self, FLAGS_DEF):
     self._cfgs = absl.flags.FLAGS
-    self._algo = DiffusionQL
-    self._algo_type = 'DiffusionQL'
 
     self._cfgs.algo_cfg.max_grad_norm = hyperparameters[self._cfgs.env]['gn']
     self._cfgs.algo_cfg.lr_decay_steps = \
@@ -90,6 +88,9 @@ class PolicyTrainer:
         break
     else:
       raise NotImplementedError
+
+    self._algo = DiffusionQL
+    self._algo_type = 'DiffusionQL'
 
   def train_mcep(self):
     self._setup()
