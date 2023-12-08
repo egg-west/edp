@@ -49,7 +49,8 @@ FLAGS_DEF = define_flags_with_default(
   pkl_path="model.pkl",
   project='OfflineRL_edp',
   prefix='mcep_',
-  policy_type='deterministic'
+  policy_type='deterministic',
+  model_prefix='td3bc_FF_',
 )
 
 
