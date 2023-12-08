@@ -48,6 +48,7 @@ FLAGS_DEF = define_flags_with_default(
   project='OfflineRL_edp',
   prefix='',
   n_timesteps=int(1e6),
+  alpha=2.5,
 )
 
 

@@ -113,7 +113,7 @@ class WandBLogger(object):
       time.sleep(np.random.uniform(0, self.config.random_delay))
     if config.mcep:
       project_name = "edp_mcep"
-      group_name = f'mcep-{self._variant["policy_temp"]}-{self._variant["sample_method"]}-{self._variant["env"]}'
+      group_name = f'mcep-{self._variant["alpha"]}-{self._variant["sample_method"]}-{self._variant["env"]}'
     else:
       project_name = self.config.project
       group_name = f'{self._variant["sample_method"]}-{self._variant["env"]}'
