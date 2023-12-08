@@ -36,7 +36,7 @@ FLAGS_DEF = define_flags_with_default(
   n_train_step_per_epoch=1000,
   eval_period=10,
   eval_n_trajs=10,
-  logging=WandBLogger.get_default_config(),
+  logging=WandBLogger.get_default_config(online=False),
   qf_layer_norm=False,
   policy_layer_norm=False,
   activation="mish",

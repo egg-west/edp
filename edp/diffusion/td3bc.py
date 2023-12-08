@@ -101,9 +101,11 @@ class TD3BC(Algo):
     self.qf = qf
     self.vf = vf
     self.policy_dist = policy_dist
-    self.observation_dim = policy.observation_dim
-    self.action_dim = policy.action_dim
-    self.max_action = policy.max_action
+    self.observation_dim = qf.observation_dim
+    #self.action_dim = policy.action_dim
+    #self.max_action = policy.max_action
+    self.action_dim = qf.action_dim
+    self.max_action = qf.max_action
     self.diffusion: GaussianDiffusion = self.policy.diffusion
 
     self._total_steps = 0
