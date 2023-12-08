@@ -159,11 +159,11 @@ class TD3BCTrainer:
               ) for t in trajs
             ]
           )
-          recent_returns["act"].append(cur_return)
-          metrics["average_10_normalized_return"] = np.mean(recent_returns["act"])
-          metrics["best_normalized_return"] = best_returns["act"] = max(
-                    best_returns["act"], cur_return
-                  )
+          #recent_returns["act"].append(cur_return)
+          #metrics["average_10_normalized_return"] = np.mean(recent_returns["act"])
+          #metrics["best_normalized_return"] = best_returns["act"] = max(
+          #          best_returns["act"], cur_return
+          #        )
           metrics["done"] = np.mean([np.sum(t["dones"]) for t in trajs])
 
           # if self._cfgs.save_model:
