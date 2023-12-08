@@ -58,7 +58,7 @@ if __name__ == '__main__':
   def main(argv):
     """Currently, train an MCEP with diffusion policy
     """
-    FLAGS_DEF.logging = WandBLogger.get_default_config(mcep=True)
+    FLAGS_DEF["logging"] = WandBLogger.get_default_config(mcep=True)
     #logging=WandBLogger.get_default_config(mcep=True),
     trainer = PolicyTrainer(FLAGS_DEF)
     trainer.train_mcep()
