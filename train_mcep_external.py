@@ -7,7 +7,8 @@ from edp.utilities.utils import (
   WandBLogger,
   define_flags_with_default,
 )
-from edp.diffusion.td3bc_trainer import TD3BCTrainer
+#from edp.diffusion.trainer import DiffusionTrainer
+from edp.diffusion.policy_trainer import PolicyTrainer
 from edp.diffusion.dql import DiffusionQL
 
 
@@ -36,7 +37,7 @@ FLAGS_DEF = define_flags_with_default(
   n_train_step_per_epoch=1000,
   eval_period=10,
   eval_n_trajs=10,
-  logging=WandBLogger.get_default_config(project_name="[edp]td3bc_ff"),
+  logging=WandBLogger.get_default_config(mcep=True),
   qf_layer_norm=False,
   policy_layer_norm=False,
   activation="mish",
@@ -45,17 +46,20 @@ FLAGS_DEF = define_flags_with_default(
   sample_method='ddpm',
   policy_temp=1.0,
   norm_reward=False,
+  pkl_path="model.pkl",
   project='OfflineRL_edp',
-  prefix='',
-  n_timesteps=int(1e6),
+  prefix='mcep_',
+  policy_type='deterministic'
 )
 
 
 if __name__ == '__main__':
 
   def main(argv):
-    trainer = TD3BCTrainer(FLAGS_DEF)
-    trainer.train()
+    """load q functions from repo jaxOfflineRL
+    """
+    trainer = PolicyTrainer(FLAGS_DEF)
+    trainer.train_mcep()
     os._exit(os.EX_OK)
 
   absl.app.run(main)
