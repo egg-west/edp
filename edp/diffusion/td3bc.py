@@ -111,10 +111,14 @@ class TD3BC(Algo):
     self._total_steps = 0
     self._train_states = {}
 
+    # policy_params = self.policy.init(
+    #   next_rng(),
+    #   next_rng(),
+    #   jnp.zeros((10, self.observation_dim)),
+    # )
     policy_params = self.policy.init(
       next_rng(),
-      next_rng(),
-      jnp.zeros((10, self.observation_dim)),
+      jnp.zeros((self.observation_dim,)),
     )
 
     def get_lr(lr_decay=False):
