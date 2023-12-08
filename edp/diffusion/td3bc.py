@@ -408,7 +408,6 @@ class TD3BC(Algo):
       tgt_q=aux_qf['tgt_q'].mean(),
       policy_loss=aux_policy['policy_loss'],
       guide_loss=aux_policy['guide_loss'],
-      diff_loss=aux_policy['diff_loss'],
       lmbda=aux_policy['lmbda'].mean(),
       qf1_grad_norm=optax.global_norm(grads_qf[0]['qf1']),
       qf2_grad_norm=optax.global_norm(grads_qf[1]['qf2']),
