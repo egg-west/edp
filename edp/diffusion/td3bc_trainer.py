@@ -129,7 +129,7 @@ class TD3BCTrainer:
     recent_returns = {method: deque(maxlen=10) for method in act_methods}
     best_returns = {method: -float('inf') for method in act_methods}
     #for epoch in range(self._cfgs.n_epochs):
-    for step_counter in range(self._cfgs.n_timesteps):
+    for step_counter in tqdm.tqdm(range(self._cfgs.n_timesteps)):
       metrics = {"epoch": step_counter}
 
       # with Timer() as train_timer:
@@ -173,14 +173,15 @@ class TD3BCTrainer:
           #     "epoch": epoch
           #   }
           #   self._wandb_logger.save_pickle(save_data, f"{self._variant['env']}_{self._variant['seed']}_{epoch}.pkl")
+          print(metrics)
 
       #metrics["train_time"] = train_timer()
       #metrics["eval_time"] = eval_timer()
       #metrics["epoch_time"] = train_timer() + eval_timer()
       self._wandb_logger.log(metrics)
-      viskit_metrics.update(metrics)
-      logger.record_dict(viskit_metrics)
-      logger.dump_tabular(with_prefix=False, with_timestamp=False)
+      #viskit_metrics.update(metrics)
+      #logger.record_dict(viskit_metrics)
+      #logger.dump_tabular(with_prefix=False, with_timestamp=False)
 
     # save model
     if self._cfgs.save_model:
