@@ -94,9 +94,8 @@ class TD3BCTrainer:
 
   def __init__(self, FLAGS_DEF):
     self._cfgs = absl.flags.FLAGS
-    self._algo = TD3BC#DiffusionQL
+    self._algo = TD3BC
     self._algo_type = 'DiffusionQL'
-    print(self._cfgs)
 
     self._cfgs.algo_cfg.max_grad_norm = hyperparameters[self._cfgs.env]['gn']
     self._cfgs.algo_cfg.lr_decay_steps = \
@@ -113,6 +112,7 @@ class TD3BCTrainer:
     for k, v in self._cfgs.algo_cfg.items():
       self._variant[f"algo.{k}"] = v
 
+    self._cfg.algo_cfg.alpha = self._variant["alpha"]
     # get high level env
     env_name_full = self._cfgs.env
     for scenario_name in ENV_MAP:
