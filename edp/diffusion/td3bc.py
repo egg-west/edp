@@ -103,10 +103,9 @@ class TD3BC(Algo):
     self.policy_dist = policy_dist
     self.observation_dim = qf.observation_dim
     #self.action_dim = policy.action_dim
-    #self.max_action = policy.max_action
-    self.action_dim = qf.action_dim
+    #self.max_action = policy.max_actionself.diffusion.action_dim
     self.max_action = policy.act_max #TODO@make them flexible instead of depends on the policy/critic
-    self.diffusion: GaussianDiffusion = self.policy.diffusion
+    #self.diffusion: GaussianDiffusion = self.policy.diffusion
 
     self._total_steps = 0
     self._train_states = {}
